@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Tic Tac Toe</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="switch-container">
+        <span id="mode-label" class="switch-label">AI</span>
+        <div id="mode-switch" class="switch checked" role="switch" aria-checked="true" tabindex="0">
+            <span class="switch-thumb"></span>
+        </div>
+    </div>
+
+    <div class="difficulty-selector">
+        <div class="difficulty-options">
+            <span class="difficulty-option" data-difficulty="easy">Easy</span>
+            <span class="difficulty-option" data-difficulty="medium">Medium</span>
+            <span class="difficulty-option active" data-difficulty="hard">Hard</span>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="game-panel">
+            <div class="game-board">
+                <div class="cell" data-index="0"></div>
+                <div class="cell" data-index="1"></div>
+                <div class="cell" data-index="2"></div>
+                <div class="cell" data-index="3"></div>
+                <div class="cell" data-index="4"></div>
+                <div class="cell" data-index="5"></div>
+                <div class="cell" data-index="6"></div>
+                <div class="cell" data-index="7"></div>
+                <div class="cell" data-index="8"></div>
+            </div>
+            
+            <div class="game-controls">
+                <button id="reset-btn" class="reset-icon hidden" aria-label="Restart game">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                        <path d="M3 3v5h5"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="score-display" class="score-container">
+        <span id="player1-label">You:</span> <span id="player1-score">0</span>
+        <span class="score-divider">-</span>
+        <span id="player2-label">AI:</span> <span id="player2-score">0</span>
+    </div>
+    
+    <div id="reset-tooltip" class="tooltip hidden">Hold for 3 seconds to reset scores</div>
+    
+    <div id="score-info-tooltip" class="info-tooltip">
+        <div class="info-content">
+            <h3>Score Reset</h3>
+            <p>Hold the score display for 3 seconds to reset both scores to zero.</p>
+            <div class="tooltip-footer">
+                <button id="close-score-tooltip" class="got-it-btn">Got it</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="info-button" class="info-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+    </div>
+    
+    <div id="info-tooltip" class="info-tooltip">
+        <div class="info-content">
+            <h3>How to Play</h3>
+            <ul>
+                <li>Each player can place only 3 marks</li>
+                <li>Placing a 4th mark removes your oldest mark</li>
+                <li>Connect 3 in a row to win</li>
+                <li>Pulsing marks show which one disappears next</li>
+                <li>Toggle AI/Human in top-right corner</li>
+            </ul>
+            <div class="tooltip-footer">
+                <button id="close-tooltip" class="got-it-btn">Got it</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html> 

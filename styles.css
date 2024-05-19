@@ -1,0 +1,1037 @@
+:root {
+    --bg-color: #000;
+    --text-color: #fff;
+    --border-color: rgba(255, 255, 255, 0.2);
+    --highlight-color: rgba(255, 255, 255, 0.1);
+    --accent-color: #fff;
+    --shadow-color: rgba(255, 255, 255, 0.05);
+    --transition-time: 0.4s;
+    --switch-width: 34px;
+    --switch-height: 18px;
+    --thumb-size: 14px;
+    --switch-bg: #333;
+    --switch-active-bg: #444;
+    --grid-line-width: 2px;
+    --board-max-width: 260px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    padding-bottom: 100px;
+    padding-top: 80px;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+.container {
+    width: 100%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: 0 auto;
+    padding-top: 0;
+    padding-bottom: 80px;
+    overflow: visible;
+    position: relative;
+    flex: 1;
+}
+
+.game-panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    position: relative;
+}
+
+/* Game Board Styles */
+.game-board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 0;
+    aspect-ratio: 1/1;
+    margin: 0 auto;
+    max-width: var(--board-max-width);
+    width: 100%;
+    position: relative;
+    background-image: 
+        linear-gradient(to right, transparent 33%, rgba(255, 255, 255, 0.7) 33%, rgba(255, 255, 255, 0.7) calc(33% + var(--grid-line-width)), transparent calc(33% + var(--grid-line-width))),
+        linear-gradient(to right, transparent 66%, rgba(255, 255, 255, 0.7) 66%, rgba(255, 255, 255, 0.7) calc(66% + var(--grid-line-width)), transparent calc(66% + var(--grid-line-width))),
+        linear-gradient(to bottom, transparent 33%, rgba(255, 255, 255, 0.7) 33%, rgba(255, 255, 255, 0.7) calc(33% + var(--grid-line-width)), transparent calc(33% + var(--grid-line-width))),
+        linear-gradient(to bottom, transparent 66%, rgba(255, 255, 255, 0.7) 66%, rgba(255, 255, 255, 0.7) calc(66% + var(--grid-line-width)), transparent calc(66% + var(--grid-line-width)));
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    -webkit-tap-highlight-color: transparent;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.cell {
+    background-color: transparent;
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    aspect-ratio: 1/1;
+    font-size: 2.5rem;
+    font-weight: 700;
+    cursor: pointer;
+    position: relative;
+    z-index: 2;
+    -webkit-tap-highlight-color: transparent !important;
+    outline: none;
+    user-select: none;
+    transition: none;
+}
+
+/* Remove focus/active state styling */
+.cell:focus,
+.cell:active,
+.cell:hover {
+    background-color: transparent;
+    outline: none;
+    box-shadow: none;
+}
+
+/* Complete X redesign with more subtle animations */
+.cell.x {
+    position: relative;
+    z-index: 3;
+    animation: markFadeIn 0.2s ease-out forwards;
+}
+
+@keyframes markFadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+.cell.x::before, 
+.cell.x::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 70%;
+    height: 3px;
+    background-color: var(--text-color);
+    border-radius: 1.5px;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.cell.x::before {
+    transform: translate(-50%, -50%) rotate(45deg);
+    animation: drawX1 0.2s ease-out forwards;
+}
+
+.cell.x::after {
+    transform: translate(-50%, -50%) rotate(-45deg);
+    animation: drawX2 0.2s ease-out forwards;
+    animation-delay: 0.1s;
+    transition: opacity 0.2s ease-in-out;
+}
+
+@keyframes drawX1 {
+    0% { 
+        transform: translate(-50%, -50%) rotate(45deg) scaleX(0);
+        opacity: 0.5;
+    }
+    100% { 
+        transform: translate(-50%, -50%) rotate(45deg) scaleX(1);
+        opacity: 1;
+    }
+}
+
+@keyframes drawX2 {
+    0% { 
+        transform: translate(-50%, -50%) rotate(-45deg) scaleX(0);
+        opacity: 0.5;
+    }
+    100% { 
+        transform: translate(-50%, -50%) rotate(-45deg) scaleX(1);
+        opacity: 1;
+    }
+}
+
+/* Completely revised O mark for better reliability */
+.cell.o {
+    position: relative;
+    z-index: 3;
+}
+
+.cell.o::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 60%;
+    height: 60%;
+    border: 3px solid var(--text-color);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 1;
+    will-change: transform, opacity, border-color;
+    transition: opacity 0.2s ease-in-out;
+}
+
+/* Make O always visible from the start, then animate in */
+.cell.o::before {
+    animation: oAppear 0.3s ease-out forwards;
+}
+
+@keyframes oAppear {
+    0% { 
+        transform: translate(-50%, -50%) scale(0.2);
+    }
+    100% { 
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+/* X additional animations - more subtle */
+.cell.x.animated::before {
+    animation: subtleGlowX 1.5s ease-out forwards;
+}
+
+.cell.x.animated::after {
+    animation: subtleGlowX 1.5s ease-out forwards;
+    animation-delay: 0.1s;
+}
+
+@keyframes subtleGlowX {
+    0% { 
+        box-shadow: 0 0 0px rgba(255, 255, 255, 0); 
+        opacity: 1;
+    }
+    30% { 
+        box-shadow: 0 0 2px rgba(255, 255, 255, 0.3); 
+        opacity: 0.5;
+    }
+    100% { 
+        box-shadow: 0 0 0px rgba(255, 255, 255, 0); 
+        opacity: 1;
+    }
+}
+
+/* O additional animations - more subtle */
+.cell.o.animated::before {
+    animation: subtleGlowO 1.5s ease-out forwards;
+    animation-play-state: running;
+}
+
+@keyframes subtleGlowO {
+    0% { 
+        border-color: var(--text-color); 
+        opacity: 1;
+    }
+    30% { 
+        border-color: rgba(255, 255, 255, 0.6); 
+        opacity: 0.5;
+    }
+    100% { 
+        border-color: var(--text-color); 
+        opacity: 1;
+    }
+}
+
+/* Shadow effect animation */
+.cell.shadow-burst::before, .cell.shadow-burst::after {
+    animation: subtleShadowBurst 0.5s ease-out forwards;
+}
+
+@keyframes subtleShadowBurst {
+    0% { filter: drop-shadow(0 0 0px rgba(255, 255, 255, 0)); }
+    50% { filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.3)); }
+    100% { filter: drop-shadow(0 0 0px rgba(255, 255, 255, 0)); }
+}
+
+/* Refined spin-in animation for X */
+.cell.x.spin-in::before {
+    animation: spinInX1 0.3s ease-out forwards;
+}
+
+.cell.x.spin-in::after {
+    animation: spinInX2 0.3s ease-out forwards;
+    animation-delay: 0.05s;
+}
+
+@keyframes spinInX1 {
+    0% { 
+        transform: translate(-50%, -50%) rotate(0deg) scaleX(0);
+        opacity: 0;
+    }
+    100% { 
+        transform: translate(-50%, -50%) rotate(45deg) scaleX(1);
+        opacity: 1;
+    }
+}
+
+@keyframes spinInX2 {
+    0% { 
+        transform: translate(-50%, -50%) rotate(0deg) scaleX(0);
+        opacity: 0;
+    }
+    100% { 
+        transform: translate(-50%, -50%) rotate(-45deg) scaleX(1);
+        opacity: 1;
+    }
+}
+
+/* Subtle color effects */
+.cell.color-flash {
+    animation: subtleColorFlash 0.7s forwards;
+}
+
+@keyframes subtleColorFlash {
+    0% { filter: brightness(1); }
+    30% { filter: brightness(1.1); }
+    100% { filter: brightness(1); }
+}
+
+/* Gentle float animation */
+.cell.floating {
+    animation: gentleFloat 2s ease-in-out infinite;
+}
+
+@keyframes gentleFloat {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-2px); }
+    100% { transform: translateY(0px); }
+}
+
+/* Refined fade out animations */
+.cell.fading.x::before {
+    --rotation: 45deg;
+    animation: fadeOutX 0.4s forwards;
+}
+
+.cell.fading.x::after {
+    --rotation: -45deg;
+    animation: fadeOutX 0.4s forwards;
+}
+
+@keyframes fadeOutX {
+    0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) rotate(var(--rotation)) scaleX(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) rotate(var(--rotation)) scaleX(0.7);
+    }
+}
+
+.cell.fading.o::before {
+    animation: fadeOutO 0.4s forwards;
+    opacity: 1;
+}
+
+@keyframes fadeOutO {
+    0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+        border-color: var(--text-color);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.7);
+        border-color: rgba(255, 255, 255, 0.3);
+    }
+}
+
+/* Style for next-to-fade indicators - more subtle */
+.cell.next-to-fade.x::before, 
+.cell.next-to-fade.x::after {
+    animation: subtlePulseX 2s infinite;
+}
+
+.cell.next-to-fade.o::before {
+    animation: subtlePulseO 2s infinite;
+}
+
+@keyframes subtlePulseX {
+    0% { opacity: 1; }
+    50% { opacity: 0.4; }
+    100% { opacity: 1; }
+}
+
+@keyframes subtlePulseO {
+    0% {
+        opacity: 1;
+        border-color: var(--text-color);
+    }
+    50% {
+        opacity: 0.4;
+        border-color: rgba(255, 255, 255, 0.4);
+    }
+    100% {
+        opacity: 1;
+        border-color: var(--text-color);
+    }
+}
+
+/* Make winning marks more obvious */
+.cell.winning.x::before, 
+.cell.winning.x::after {
+    background-color: rgba(255, 255, 255, 0.9);
+    height: 4px;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+    animation: pulseLine 1.5s infinite;
+}
+
+.cell.winning.o::before {
+    opacity: 1 !important;
+    border-color: rgba(255, 255, 255, 0.9);
+    border-width: 4px;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+    animation: pulseCircle 1.5s infinite;
+}
+
+@keyframes pulseLine {
+    0% {
+        box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+    }
+    100% {
+        box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+    }
+}
+
+@keyframes pulseCircle {
+    0% {
+        box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+    }
+    100% {
+        box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+    }
+}
+
+/* Remove zoom bounce effect */
+.cell.zoom-bounce {
+    animation: none;
+}
+
+@keyframes zoomBounce {
+    0% { opacity: 0; }
+    100% { opacity: 0; }
+}
+
+/* Remove shimmer effect */
+.cell.shimmer::before::after, .cell.shimmer::after::after {
+    display: none;
+}
+
+@keyframes shimmerEffect {
+    0% { opacity: 0; }
+    100% { opacity: 0; }
+}
+
+.game-controls {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.5rem;
+    width: 100%;
+    position: relative;
+    padding-bottom: 0;
+}
+
+#reset-btn {
+    background-color: transparent;
+    color: var(--text-color);
+    border: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    opacity: 0;
+    position: fixed;
+    bottom: 60px;
+    left: 50%;
+    transform: translateX(-50%) scale(0.8);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    z-index: 10;
+}
+
+#reset-btn.reset-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(5px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+#reset-btn:hover {
+    opacity: 1;
+    transform: translateX(-50%) scale(1.1);
+}
+
+#reset-btn svg {
+    width: 24px;
+    height: 24px;
+}
+
+#reset-btn.hidden {
+    display: none;
+}
+
+/* General hidden class */
+.hidden {
+    display: none;
+}
+
+/* Show the reset button with animation when game ends */
+#reset-btn:not(.hidden) {
+    opacity: 0.8;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: translateX(-50%) scale(0.95);
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.3);
+    }
+    70% {
+        transform: translateX(-50%) scale(1);
+        box-shadow: 0 0 0 8px rgba(255, 255, 255, 0);
+    }
+    100% {
+        transform: translateX(-50%) scale(0.95);
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+    }
+}
+
+/* Modern Switch Toggle */
+.switch-container {
+    position: fixed;
+    top: 25px;
+    right: 15px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    z-index: 100;
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 4px 8px;
+    border-radius: 12px;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.switch-label {
+    color: var(--text-color);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    min-width: 30px;
+    text-align: right;
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+}
+
+/* Mode text animations - only apply to switch container elements */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeOutDown {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+}
+
+@keyframes glowPulse {
+    0% {
+        text-shadow: 0 0 0 rgba(255, 255, 255, 0);
+    }
+    50% {
+        text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+    }
+    100% {
+        text-shadow: 0 0 0 rgba(255, 255, 255, 0);
+    }
+}
+
+.switch-container .switch-label {
+    animation: glowPulse 2s infinite;
+}
+
+.switch-container.text-changing .switch-label {
+    animation: fadeOutDown 0.3s forwards;
+}
+
+.switch-container.text-changed .switch-label {
+    animation: fadeInUp 0.3s forwards;
+}
+
+.switch {
+    position: relative;
+    width: var(--switch-width);
+    height: var(--switch-height);
+    background-color: var(--switch-bg);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    padding: 0 2px;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+}
+
+.switch.checked {
+    background-color: var(--switch-active-bg);
+}
+
+.switch-thumb {
+    position: absolute;
+    left: 2px;
+    width: var(--thumb-size);
+    height: var(--thumb-size);
+    background-color: var(--text-color);
+    border-radius: 50%;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.switch.checked .switch-thumb {
+    transform: translateX(calc(var(--switch-width) - var(--thumb-size) - 4px));
+}
+
+/* Disable highlight on touch/click for all interactive elements */
+button, 
+input, 
+select, 
+textarea, 
+[role="button"],
+.cell {
+    -webkit-tap-highlight-color: transparent !important;
+    outline: none;
+}
+
+/* Responsiveness */
+@media (max-width: 480px) {
+    body {
+        padding-top: 70px; /* Slightly less on mobile */
+    }
+    
+    .switch-container {
+        top: 20px;
+    }
+    
+    .cell {
+        min-height: 60px;
+    }
+    :root {
+        --board-max-width: 220px;
+    }
+    
+    .container {
+        padding-bottom: 100px;
+    }
+    
+    .game-controls {
+        padding-bottom: 0;
+    }
+    
+    #reset-btn {
+        bottom: 60px;
+    }
+    
+    #reset-btn.reset-icon {
+        width: 40px;
+        height: 40px;
+    }
+    
+    #reset-btn svg {
+        width: 22px;
+        height: 22px;
+    }
+}
+
+/* Score display */
+.score-container {
+    position: fixed;
+    bottom: 15px;
+    right: 15px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: var(--text-color);
+    font-size: 12px;
+    padding: 6px 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    z-index: 20;
+    user-select: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.3s ease;
+}
+
+.score-container:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.score-container.resetting {
+    background-color: rgba(50, 50, 50, 0.8);
+    transform: scale(1.05);
+}
+
+.score-divider {
+    margin: 0 3px;
+    opacity: 0.7;
+}
+
+#player1-score, #player2-score {
+    font-weight: 600;
+    min-width: 10px;
+    text-align: center;
+}
+
+/* Tooltip */
+.tooltip {
+    position: fixed;
+    bottom: 45px;
+    right: 15px;
+    background-color: rgba(0, 0, 0, 0.9);
+    color: var(--text-color);
+    font-size: 11px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    z-index: 25;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    max-width: 150px;
+    text-align: center;
+    white-space: nowrap;
+    visibility: hidden;
+}
+
+.tooltip::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    right: 15px;
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid rgba(0, 0, 0, 0.9);
+}
+
+.tooltip.visible {
+    opacity: 1;
+    transform: translateY(0);
+    visibility: visible;
+}
+
+@media (max-width: 480px) {
+    .score-container {
+        bottom: 10px;
+        right: 10px;
+        font-size: 11px;
+        padding: 4px 8px;
+    }
+    
+    .tooltip {
+        bottom: 40px;
+        right: 10px;
+        font-size: 10px;
+    }
+}
+
+/* Ensure O marks are always visible */
+.cell.o.visible::before {
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* Override any animations that might cause O disappearance */
+.cell.o::before {
+    -webkit-backface-visibility: visible !important;
+    backface-visibility: visible !important;
+    visibility: visible !important;
+}
+
+/* Info icon */
+.info-icon {
+    position: fixed;
+    bottom: 15px;
+    left: 15px;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background-color: rgba(20, 20, 20, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 100;
+    padding: 4px;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.info-icon svg {
+    color: var(--text-color);
+    opacity: 0.9;
+    width: 16px;
+    height: 16px;
+}
+
+/* Info tooltip */
+.info-tooltip {
+    position: fixed;
+    bottom: 50px;
+    left: 15px;
+    background-color: rgba(10, 10, 10, 0.95);
+    color: var(--text-color);
+    border-radius: 8px;
+    z-index: 150;
+    opacity: 0;
+    transform: translateY(10px) scale(0.95);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    width: 250px;
+    max-width: 80vw;
+    font-size: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.info-tooltip.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.info-content {
+    padding: 12px;
+}
+
+.info-content h3 {
+    margin: 0 0 8px 0;
+    font-size: 14px;
+    font-weight: 600;
+    opacity: 0.9;
+}
+
+.info-content ul {
+    margin: 0;
+    padding-left: 18px;
+    list-style-type: disc;
+    line-height: 1.4;
+    opacity: 0.8;
+}
+
+.info-content li {
+    margin-bottom: 5px;
+}
+
+.tooltip-footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dont-show-again {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    opacity: 0.7;
+    cursor: pointer;
+}
+
+.dont-show-again input {
+    margin: 0;
+    cursor: pointer;
+}
+
+#close-tooltip {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: var(--text-color);
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+#close-tooltip:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Styled "Got it" button */
+.got-it-btn {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: var(--text-color);
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 100px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.got-it-btn:hover {
+    background-color: rgba(255, 255, 255, 0.25);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+}
+
+.got-it-btn:active {
+    transform: translateY(1px);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* Mobile adjustments */
+@media (max-width: 480px) {
+    .info-icon {
+        bottom: 10px;
+        left: 10px;
+        width: 22px;
+        height: 22px;
+    }
+    
+    .info-tooltip {
+        bottom: 40px;
+        left: 10px;
+        font-size: 11px;
+        max-width: 90vw;
+    }
+}
+
+/* Score info tooltip positioning */
+#score-info-tooltip {
+    bottom: 50px;
+    left: auto;
+    right: 15px;
+}
+
+/* Add a pointer to the score tooltip */
+#score-info-tooltip::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    right: 20px;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid rgba(10, 10, 10, 0.95);
+}
+
+@media (max-width: 480px) {
+    #score-info-tooltip {
+        bottom: 40px;
+        right: 10px;
+    }
+}
+
+/* Difficulty Selector */
+.difficulty-selector {
+    position: fixed;
+    top: 25px;
+    left: 15px;
+    display: flex;
+    align-items: center;
+    z-index: 100;
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 4px 8px;
+    border-radius: 12px;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.difficulty-options {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+.difficulty-option {
+    color: var(--text-color);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 3px 7px;
+    border-radius: 8px;
+    cursor: pointer;
+    opacity: 0.5;
+    transition: all 0.2s ease;
+}
+
+.difficulty-option:hover {
+    opacity: 0.8;
+}
+
+.difficulty-option.active {
+    opacity: 1;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Hide difficulty selector when in human mode */
+body.human-mode .difficulty-selector {
+    display: none;
+}
+
+@media (max-width: 480px) {
+    .difficulty-selector {
+        top: 20px;
+        left: 10px;
+    }
+    
+    .difficulty-option {
+        font-size: 10px;
+        padding: 2px 5px;
+    }
+} 
