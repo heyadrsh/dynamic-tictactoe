@@ -977,61 +977,29 @@ textarea,
     }
 }
 
-/* Difficulty Selector */
+/* Remove difficulty selector styles since we're only using hard mode now */
 .difficulty-selector {
-    position: fixed;
-    top: 25px;
-    left: 15px;
-    display: flex;
-    align-items: center;
-    z-index: 100;
-    background-color: rgba(0, 0, 0, 0.8);
-    padding: 4px 8px;
-    border-radius: 12px;
-    -webkit-tap-highlight-color: transparent;
+    display: none;
 }
 
 .difficulty-options {
-    display: flex;
-    gap: 5px;
-    align-items: center;
+    display: none;
 }
 
 .difficulty-option {
-    color: var(--text-color);
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    padding: 3px 7px;
-    border-radius: 8px;
-    cursor: pointer;
-    opacity: 0.5;
-    transition: all 0.2s ease;
+    display: none;
 }
 
-.difficulty-option:hover {
-    opacity: 0.8;
-}
-
-.difficulty-option.active {
-    opacity: 1;
-    background-color: rgba(255, 255, 255, 0.2);
-}
-
-/* Hide difficulty selector when in human mode */
 body.human-mode .difficulty-selector {
     display: none;
 }
 
 @media (max-width: 480px) {
     .difficulty-selector {
-        top: 20px;
-        left: 10px;
+        display: none;
     }
     
     .difficulty-option {
-        font-size: 10px;
-        padding: 2px 5px;
+        display: none;
     }
 } 

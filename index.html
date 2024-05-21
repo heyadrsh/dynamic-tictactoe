@@ -17,14 +17,6 @@
         </div>
     </div>
 
-    <div class="difficulty-selector">
-        <div class="difficulty-options">
-            <span class="difficulty-option" data-difficulty="easy">Easy</span>
-            <span class="difficulty-option" data-difficulty="medium">Medium</span>
-            <span class="difficulty-option active" data-difficulty="hard">Hard</span>
-        </div>
-    </div>
-
     <div class="container">
         <div class="game-panel">
             <div class="game-board">
@@ -56,12 +48,12 @@
         <span id="player2-label">AI:</span> <span id="player2-score">0</span>
     </div>
     
-    <div id="reset-tooltip" class="tooltip hidden">Hold for 3 seconds to reset scores</div>
+    <div id="reset-tooltip" class="tooltip hidden">Hold for 1 second to reset scores</div>
     
     <div id="score-info-tooltip" class="info-tooltip">
         <div class="info-content">
             <h3>Score Reset</h3>
-            <p>Hold the score display for 3 seconds to reset both scores to zero.</p>
+            <p>Hold the score display for 1 second to reset both scores to zero.</p>
             <div class="tooltip-footer">
                 <button id="close-score-tooltip" class="got-it-btn">Got it</button>
             </div>
@@ -84,6 +76,7 @@
                 <li>Placing a 4th mark removes your oldest mark</li>
                 <li>Connect 3 in a row to win</li>
                 <li>Pulsing marks show which one disappears next</li>
+                <li>The AI learns from your strategies</li>
                 <li>Toggle AI/Human in top-right corner</li>
             </ul>
             <div class="tooltip-footer">

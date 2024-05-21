@@ -10,10 +10,16 @@ const state = {
     moveHistory: [], // Track all moves for learning AI
     gameCount: 0, // Track number of games played
     scores: {
-        player1: 0, // Human player (X in AI mode, X in Human mode)
-        player2: 0  // AI (in AI mode) or Human player 2 (O in Human mode)
+        ai: {
+            player: 0, // Human player (X) in AI mode
+            ai: 0      // AI player (O) in AI mode
+        },
+        human: {
+            x: 0,      // X player in Human mode
+            o: 0       // O player in Human mode
+        }
     },
-    aiDifficulty: localStorage.getItem('ticTacToeAIDifficulty') || 'hard' // Default to hard
+    aiDifficulty: 'hard' // Hard mode is now the only mode
 };
 
 // Learning AI data structure
@@ -206,33 +212,21 @@ const learningAI = {
     
     // Calculate current exploration rate based on games played
     getExplorationRate() {
-        if (state.aiDifficulty === 'easy') {
-            return 0.7; // 70% random moves for easy
-        } else if (state.aiDifficulty === 'medium') {
-            return 0.3; // 30% random moves for medium
-        }
-        
-        // Hard difficulty - learn faster
-        if (state.gameCount <= this.explorationThreshold) {
-            // Linear decrease from initialExplorationRate to minExplorationRate
-            return this.initialExplorationRate - 
-                  (this.initialExplorationRate - this.minExplorationRate) * 
-                  (state.gameCount / this.explorationThreshold);
-        }
-        return this.minExplorationRate; // Minimum exploration rate
+        // Always use 1% exploration rate (hard mode)
+        return 0.01; // 1% exploration rate for hard mode
     },
     
     // Choose best move based on learning
     chooseMove(board) {
         // First look for immediate win
         const winMove = findWinningMove('o', board);
-        if (winMove !== -1 && state.aiDifficulty !== 'easy') {
+        if (winMove !== -1) {
             return winMove;
         }
         
-        // In hard mode, look for immediate blocks
+        // Look for immediate blocks (hard mode behavior)
         const blockMove = findWinningMove('x', board);
-        if (blockMove !== -1 && state.aiDifficulty === 'hard') {
+        if (blockMove !== -1) {
             return blockMove;
         }
         
@@ -299,9 +293,9 @@ const learningAI = {
         const winMove = findWinningMove('o', board);
         if (winMove !== -1) return winMove;
         
-        // Then try to block opponent
+        // Then try to block opponent (hard mode always blocks)
         const blockMove = findWinningMove('x', board);
-        if (blockMove !== -1 && state.aiDifficulty !== 'easy') {
+        if (blockMove !== -1) {
             return blockMove;
         }
         
@@ -338,7 +332,6 @@ const infoTooltip = document.getElementById('info-tooltip');
 const closeTooltipBtn = document.getElementById('close-tooltip');
 const scoreInfoTooltip = document.getElementById('score-info-tooltip');
 const closeScoreTooltipBtn = document.getElementById('close-score-tooltip');
-const difficultyOptions = document.querySelectorAll('.difficulty-option');
 
 // Helper function to ensure O marks are visible
 function ensureOMarksVisible() {
@@ -701,9 +694,6 @@ function togglePlayerMode() {
         // Update the mode label
         modeLabel.textContent = state.playerMode === 'ai' ? 'AI' : 'HUMAN';
         
-        // Update body class to control visibility of difficulty selector
-        document.body.classList.toggle('human-mode', state.playerMode === 'human');
-        
         // Update score display
         updateScoreDisplay();
         
@@ -721,42 +711,26 @@ function togglePlayerMode() {
     }, 300);
 }
 
-// Set AI difficulty (can be called externally)
-function setAIDifficulty(difficulty) {
-    if (['easy', 'medium', 'hard'].includes(difficulty)) {
-        state.aiDifficulty = difficulty;
-        localStorage.setItem('ticTacToeAIDifficulty', difficulty);
-        console.log(`AI difficulty set to ${difficulty}`);
-        
-        // Restart game if in AI mode
-        if (state.playerMode === 'ai') {
-            initGame();
-        }
-    }
-}
-
-// Switch interactions
-function handleSwitchClick() {
-    togglePlayerMode();
-}
-
-function handleSwitchKeydown(e) {
-    // Toggle with Space or Enter
-    if (e.key === ' ' || e.key === 'Enter') {
-        e.preventDefault();
-        togglePlayerMode();
-    }
-}
-
 // Load scores from localStorage
 function loadScores() {
     const storedScores = localStorage.getItem('ticTacToeScores');
     if (storedScores) {
         try {
             state.scores = JSON.parse(storedScores);
+            
+            // Ensure all score properties exist (for backwards compatibility)
+            if (!state.scores.ai) {
+                state.scores.ai = { player: 0, ai: 0 };
+            }
+            if (!state.scores.human) {
+                state.scores.human = { x: 0, o: 0 };
+            }
         } catch (e) {
             console.error('Error loading scores:', e);
-            state.scores = { player1: 0, player2: 0 };
+            state.scores = {
+                ai: { player: 0, ai: 0 },
+                human: { x: 0, o: 0 }
+            };
         }
     }
     updateScoreDisplay();
@@ -781,30 +755,31 @@ function updateScoreDisplay() {
     if (state.playerMode === 'ai') {
         player1Label.textContent = 'You:';
         player2Label.textContent = 'AI:';
+        player1Score.textContent = state.scores.ai.player;
+        player2Score.textContent = state.scores.ai.ai;
     } else {
         player1Label.textContent = 'X:';
         player2Label.textContent = 'O:';
+        player1Score.textContent = state.scores.human.x;
+        player2Score.textContent = state.scores.human.o;
     }
-    
-    player1Score.textContent = state.scores.player1;
-    player2Score.textContent = state.scores.player2;
 }
 
 // Update score based on winner
 function updateScore(winner) {
     if (state.playerMode === 'ai') {
-        // In AI mode: player1 = human (X), player2 = AI (O)
+        // In AI mode: player = human (X), ai = AI (O)
         if (winner === 'x') {
-            state.scores.player1++;
+            state.scores.ai.player++;
         } else if (winner === 'o') {
-            state.scores.player2++;
+            state.scores.ai.ai++;
         }
     } else {
         // In Human mode: player1 = X, player2 = O
         if (winner === 'x') {
-            state.scores.player1++;
+            state.scores.human.x++;
         } else if (winner === 'o') {
-            state.scores.player2++;
+            state.scores.human.o++;
         }
     }
     
@@ -856,10 +831,16 @@ function startScoreReset(e) {
     // Add visual feedback
     scoreDisplay.classList.add('resetting');
     
-    // Start timer
+    // Start timer - 1 second hold
     scoreResetTimer = setTimeout(() => {
-        // Reset scores
-        state.scores = { player1: 0, player2: 0 };
+        // Reset only the current mode's scores
+        if (state.playerMode === 'ai') {
+            state.scores.ai.player = 0;
+            state.scores.ai.ai = 0;
+        } else {
+            state.scores.human.x = 0;
+            state.scores.human.o = 0;
+        }
         
         // Update display
         updateScoreDisplay();
@@ -880,7 +861,7 @@ function startScoreReset(e) {
         setTimeout(() => {
             resetTooltip.classList.remove('visible');
             setTimeout(() => {
-                resetTooltip.textContent = "Hold for 3 seconds to reset scores";
+                resetTooltip.textContent = "Hold for 1 second to reset scores";
             }, 500);
         }, 2000);
         
@@ -918,41 +899,31 @@ function initInfoTooltip() {
     };
 }
 
-// Function to show info tooltip
+// Function to show info tooltip on first visit
 function showInfoTooltip() {
-    infoTooltip.classList.add('visible');
+    // Check if this is the first visit
+    const hasVisitedBefore = localStorage.getItem('ticTacToeVisited');
+    
+    if (!hasVisitedBefore) {
+        // Show tooltip on first visit
+        infoTooltip.classList.add('visible');
+        
+        // Mark as visited for future sessions
+        localStorage.setItem('ticTacToeVisited', 'true');
+    }
 }
 
-// Set up difficulty selector
-function setupDifficultySelector() {
-    // Set initial active difficulty based on localStorage
-    const currentDifficulty = state.aiDifficulty;
-    
-    difficultyOptions.forEach(option => {
-        // Mark the current difficulty as active
-        if (option.dataset.difficulty === currentDifficulty) {
-            option.classList.add('active');
-        } else {
-            option.classList.remove('active');
-        }
-        
-        // Add click event listener
-        option.addEventListener('click', function() {
-            const difficulty = this.dataset.difficulty;
-            
-            // Update UI
-            difficultyOptions.forEach(opt => {
-                opt.classList.remove('active');
-            });
-            this.classList.add('active');
-            
-            // Set the difficulty
-            setAIDifficulty(difficulty);
-        });
-    });
-    
-    // Show/hide the difficulty selector based on current mode
-    document.body.classList.toggle('human-mode', state.playerMode === 'human');
+// Switch interactions
+function handleSwitchClick() {
+    togglePlayerMode();
+}
+
+function handleSwitchKeydown(e) {
+    // Toggle with Space or Enter
+    if (e.key === ' ' || e.key === 'Enter') {
+        e.preventDefault();
+        togglePlayerMode();
+    }
 }
 
 // EVENT LISTENERS
@@ -979,12 +950,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize info tooltip
     initInfoTooltip();
     
-    // Setup difficulty selector
-    setupDifficultySelector();
-    
     // Initialize the game
     initGame();
     
-    // Show info tooltip on first load
+    // Show info tooltip only on first visit
     setTimeout(showInfoTooltip, 1000);
 }); 
