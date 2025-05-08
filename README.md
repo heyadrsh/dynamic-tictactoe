@@ -1,4 +1,4 @@
-# Dynamic Tic Tac Toe
+# Dynamic Tic Tac Toe - Never DRAW A GAME
 
 A unique twist on classic Tic Tac Toe with a learning AI and limited marks per player.
 
