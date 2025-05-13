@@ -1,4 +1,4 @@
-# Dynamic Tic Tac Toe
+# Dynamic Tic Tac Toe - Never DRAW A GAME
 
 A unique twist on classic Tic Tac Toe with a learning AI and limited marks per player.
 
@@ -15,7 +15,6 @@ A unique twist on classic Tic Tac Toe with a learning AI and limited marks per p
 
 ## Features
 
-- **AI with 3 difficulty levels:** Easy, Medium, and Hard
 - **Self-learning AI:** Gets better the more you play
 - **Score tracking:** Keeps track of your wins and losses
 - **Human vs Human mode:** Play against a friend
@@ -30,7 +29,6 @@ A unique twist on classic Tic Tac Toe with a learning AI and limited marks per p
 ## Controls
 
 - **Top-right toggle:** Switch between AI and Human opponent
-- **Top-left options:** Change AI difficulty (Easy/Medium/Hard)
 - **Bottom center:** Click restart icon after a game ends
 - **Bottom right:** View and reset scores (hold to reset)
 - **Bottom left:** Game info and rules
