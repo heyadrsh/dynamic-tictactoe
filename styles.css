@@ -319,11 +319,13 @@ body {
 .cell.fading.x::before {
     --rotation: 45deg;
     animation: fadeOutX 0.4s forwards;
+    box-shadow: 0 0 0px rgba(255, 0, 0, 0);
 }
 
 .cell.fading.x::after {
     --rotation: -45deg;
     animation: fadeOutX 0.4s forwards;
+    box-shadow: 0 0 0px rgba(255, 0, 0, 0);
 }
 
 @keyframes fadeOutX {
@@ -346,6 +348,7 @@ body {
         opacity: 0;
         transform: translate(-50%, -50%) rotate(var(--rotation)) scaleX(0.7);
         background-color: #ff0000;
+        box-shadow: 0 0 8px rgba(255, 0, 0, 0.5);
     }
 }
 
@@ -378,14 +381,24 @@ body {
     }
 }
 
-/* Style for next-to-fade indicators - more subtle */
+/* Style for next-to-fade indicators - synchronized */
 .cell.next-to-fade.x::before, 
 .cell.next-to-fade.x::after {
     animation: subtlePulseX 2s infinite;
+    animation-name: subtlePulseX;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+    animation-delay: 0s; /* Synchronized timing */
 }
 
 .cell.next-to-fade.o::before {
     animation: subtlePulseO 2s infinite;
+    animation-name: subtlePulseO;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+    animation-delay: 0s; /* Synchronized timing */
 }
 
 @keyframes subtlePulseX {

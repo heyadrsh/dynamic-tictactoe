@@ -421,6 +421,9 @@ function placeMark(index) {
     // Clear any existing next-to-fade indicators
     clearNextToFadeIndicators();
     
+    // Track cells that need to fade out
+    const cellsToFade = [];
+    
     // Add move to player's move history
     if (player === 'x') {
         state.xMoves.push(index);
@@ -432,14 +435,8 @@ function placeMark(index) {
             // Clear any existing animation classes first
             clearAnimationClasses(cells[oldestIndex]);
             
-            cells[oldestIndex].classList.add('fading');
-            setTimeout(() => {
-                cells[oldestIndex].className = 'cell';
-            }, 500);
-        } else if (state.xMoves.length === 3) {
-            // If this is the 3rd X mark, show which one will disappear next
-            const nextToFadeIndex = state.xMoves[0];
-            cells[nextToFadeIndex].classList.add('next-to-fade');
+            // Store for synchronized fading
+            cellsToFade.push({cell: cells[oldestIndex], player: 'x'});
         }
     } else {
         state.oMoves.push(index);
@@ -451,15 +448,27 @@ function placeMark(index) {
             // Clear any existing animation classes first
             clearAnimationClasses(cells[oldestIndex]);
             
-            cells[oldestIndex].classList.add('fading');
-            setTimeout(() => {
-                cells[oldestIndex].className = 'cell';
-            }, 500);
-        } else if (state.oMoves.length === 3) {
-            // If this is the 3rd O mark, show which one will disappear next
-            const nextToFadeIndex = state.oMoves[0];
-            cells[nextToFadeIndex].classList.add('next-to-fade');
+            // Store for synchronized fading
+            cellsToFade.push({cell: cells[oldestIndex], player: 'o'});
         }
+    }
+    
+    // Apply synchronized fading if needed
+    if (cellsToFade.length > 0) {
+        // Force a reflow before starting animations
+        void document.body.offsetWidth;
+        
+        // Apply fading classes simultaneously
+        cellsToFade.forEach(item => {
+            item.cell.classList.add('fading');
+        });
+        
+        // Remove all faded cells after animation completes
+        setTimeout(() => {
+            cellsToFade.forEach(item => {
+                item.cell.className = 'cell';
+            });
+        }, 500);
     }
     
     // Update UI - clear any existing animation classes first
@@ -477,7 +486,7 @@ function placeMark(index) {
     // Apply random animation effects
     applyRandomAnimation(cells[index]);
     
-    // Update next-to-fade indicators after move
+    // Update next-to-fade indicators after move - will synchronize animations
     updateNextToFadeIndicators();
 }
 
@@ -531,21 +540,40 @@ function clearNextToFadeIndicators() {
 
 // Update next-to-fade indicators based on current moves
 function updateNextToFadeIndicators() {
+    // Clear any existing next-to-fade classes first to ensure synchronized animations
+    cells.forEach(cell => {
+        if (cell.classList.contains('next-to-fade')) {
+            cell.classList.remove('next-to-fade');
+        }
+    });
+    
+    // Collect the cells that need to be marked for fading
+    const cellsToFade = [];
+    
     // Only show indicators if there are 3 marks (the next one will cause a removal)
     if (state.xMoves.length === 3) {
         const nextToFadeIndex = state.xMoves[0];
-        cells[nextToFadeIndex].classList.add('next-to-fade');
+        cellsToFade.push(cells[nextToFadeIndex]);
     }
     
     if (state.oMoves.length === 3) {
         const nextToFadeIndex = state.oMoves[0];
-        cells[nextToFadeIndex].classList.add('next-to-fade');
+        cellsToFade.push(cells[nextToFadeIndex]);
         
         // Ensure this O mark stays visible
         cells[nextToFadeIndex].classList.add('visible');
+    }
+    
+    // Force a reflow before adding the next-to-fade class to all cells at once
+    // This ensures animations start in sync
+    if (cellsToFade.length > 0) {
+        // Force browser reflow
+        void document.body.offsetWidth;
         
-        // Force a reflow to ensure proper rendering
-        void cells[nextToFadeIndex].offsetWidth;
+        // Now add the class to all cells that need it simultaneously
+        cellsToFade.forEach(cell => {
+            cell.classList.add('next-to-fade');
+        });
     }
     
     // Ensure all O marks are visible
