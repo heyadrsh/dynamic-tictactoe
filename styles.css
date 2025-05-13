@@ -389,9 +389,19 @@ body {
 }
 
 @keyframes subtlePulseX {
-    0% { opacity: 1; }
-    50% { opacity: 0.4; }
-    100% { opacity: 1; }
+    0% { 
+        opacity: 1; 
+        background-color: var(--text-color);
+    }
+    50% { 
+        opacity: 0.7; 
+        background-color: #ff3333;
+        box-shadow: 0 0 5px rgba(255, 0, 0, 0.4);
+    }
+    100% { 
+        opacity: 1; 
+        background-color: var(--text-color);
+    }
 }
 
 @keyframes subtlePulseO {
@@ -400,8 +410,9 @@ body {
         border-color: var(--text-color);
     }
     50% {
-        opacity: 0.4;
-        border-color: rgba(255, 255, 255, 0.4);
+        opacity: 0.7;
+        border-color: #ff3333;
+        box-shadow: 0 0 5px rgba(255, 0, 0, 0.4);
     }
     100% {
         opacity: 1;
