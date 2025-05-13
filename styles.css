@@ -319,13 +319,11 @@ body {
 .cell.fading.x::before {
     --rotation: 45deg;
     animation: fadeOutX 0.4s forwards;
-    box-shadow: 0 0 0px rgba(255, 0, 0, 0);
 }
 
 .cell.fading.x::after {
     --rotation: -45deg;
     animation: fadeOutX 0.4s forwards;
-    box-shadow: 0 0 0px rgba(255, 0, 0, 0);
 }
 
 @keyframes fadeOutX {
@@ -348,7 +346,6 @@ body {
         opacity: 0;
         transform: translate(-50%, -50%) rotate(var(--rotation)) scaleX(0.7);
         background-color: #ff0000;
-        box-shadow: 0 0 8px rgba(255, 0, 0, 0.5);
     }
 }
 
