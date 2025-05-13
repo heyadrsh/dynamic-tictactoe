@@ -212,8 +212,8 @@ const learningAI = {
     
     // Calculate current exploration rate based on games played
     getExplorationRate() {
-        // Always use 1% exploration rate (hard mode)
-        return 0.01; // 1% exploration rate for hard mode
+        // Always use 0% exploration rate (no randomness)
+        return 0.0; // 0% exploration rate for perfect deterministic play
     },
     
     // Choose best move based on learning
