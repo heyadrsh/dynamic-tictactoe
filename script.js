@@ -492,7 +492,7 @@ function placeMark(index) {
 
 // Helper function to clear animation classes
 function clearAnimationClasses(cell) {
-    const animationClasses = [
+    const animationClasses = [x
         'animated', 'shadow-burst', 'floating', 'micro-bounce', 
         'spin-in', 'color-flash', 'zoom-bounce', 'shimmer'
     ];
