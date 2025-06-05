@@ -1,0 +1,5 @@
+Description:
+A unique twist on classic Tic Tac Toe with a learning AI. Each player can only have 3 marks at once - placing a 4th removes your oldest mark.
+
+Topics:
+tic-tac-toe game javascript html css web-game learning-ai vanilla-js browser-game minimalist 
