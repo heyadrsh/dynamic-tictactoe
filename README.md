@@ -1,6 +1,8 @@
-# Dynamic Tic Tac Toe - Never DRAW A GAME
+# ShiftTac - Never DRAW A GAME
 
 A unique twist on classic Tic Tac Toe with a learning AI and limited marks per player.
+
+![ShiftTac Icon](favicon/android-chrome-192x192.png)
 
 ## Play Online
 
