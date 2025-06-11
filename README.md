@@ -17,12 +17,14 @@ A unique twist on classic Tic Tac Toe with a learning AI and limited marks per p
 
 ## Features
 
-- **Google Gemini AI:** Real AI opponent powered by Google's latest Gemini model
+- **Google Gemini 2.0 Flash Lite AI:** Real AI opponent powered by Google's latest Gemini 2.0 Flash Lite model
 - **Intelligent Gameplay:** AI understands the unique ShiftTac rules and fading mechanics
 - **Fallback AI:** Works without API key using basic strategic AI
+- **Environment Variable Support:** Secure API key management via Vercel environment variables
 - **Score tracking:** Keeps track of your wins and losses
 - **Human vs Human mode:** Play against a friend
 - **Minimalist design:** Clean black and white interface
+- **Real-time AI thinking panel:** See how the AI analyzes moves and makes decisions
 
 ## How to Play
 
@@ -67,13 +69,16 @@ npm run dev
 1. Visit [Google AI Studio](https://ai.google.dev/)
 2. Sign in with your Google account
 3. Create a new API key
-4. Copy the key and paste it when prompted in the game
+4. For Vercel deployment: Add as `GEMINI_API_KEY` environment variable
+5. For local play: Enter when prompted in the game
 
-**Note:** The API key is stored locally in your browser and never sent anywhere except to Google's official Gemini API.
+**Note:** API keys are stored securely via Vercel environment variables (encrypted at rest) or locally in your browser. Keys are never sent anywhere except to Google's official Gemini API.
 
 ## Technical
 
-- **Frontend:** Vanilla HTML, CSS, and JavaScript (ES6 modules)
-- **AI Integration:** Google Gemini 2.5 Flash Preview API
-- **Dependencies:** @google/genai for AI communication
-- **Storage:** localStorage for game state, scores, and API key 
+- **Frontend:** Vanilla HTML, CSS, and JavaScript
+- **AI Integration:** Google Gemini 2.0 Flash Lite API via direct fetch calls
+- **Dependencies:** Zero external dependencies - pure vanilla JS
+- **Storage:** localStorage for game state, scores, and API key
+- **Deployment:** Vercel-ready with environment variable support
+- **Build System:** Custom build script for secure API key injection 
