@@ -1,0 +1,37 @@
+{
+  "name": "shifttac",
+  "version": "1.0.0",
+  "description": "ShiftTac - A unique twist on classic Tic Tac Toe with Google Gemini AI",
+  "main": "script.js",
+  "type": "module",
+  "scripts": {
+    "build": "node build.js",
+    "start": "node -e \"console.log('Open index.html in your browser to play ShiftTac!')\"",
+    "dev": "npx http-server -p 3000 -c-1",
+    "install-deps": "npm install"
+  },
+  "dependencies": {
+    "@google/genai": "^0.21.0",
+    "mime": "^4.0.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22.9.0",
+    "http-server": "^14.1.1"
+  },
+  "keywords": [
+    "shifttac",
+    "tic-tac-toe",
+    "game",
+    "javascript",
+    "html",
+    "css",
+    "web-game",
+    "gemini-ai",
+    "google-ai",
+    "vanilla-js",
+    "browser-game",
+    "minimalist"
+  ],
+  "author": "",
+  "license": "MIT"
+} 

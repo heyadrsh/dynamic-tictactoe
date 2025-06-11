@@ -17,7 +17,9 @@ A unique twist on classic Tic Tac Toe with a learning AI and limited marks per p
 
 ## Features
 
-- **Self-learning AI:** Gets better the more you play
+- **Google Gemini AI:** Real AI opponent powered by Google's latest Gemini model
+- **Intelligent Gameplay:** AI understands the unique ShiftTac rules and fading mechanics
+- **Fallback AI:** Works without API key using basic strategic AI
 - **Score tracking:** Keeps track of your wins and losses
 - **Human vs Human mode:** Play against a friend
 - **Minimalist design:** Clean black and white interface
@@ -35,8 +37,43 @@ A unique twist on classic Tic Tac Toe with a learning AI and limited marks per p
 - **Bottom right:** View and reset scores (hold to reset)
 - **Bottom left:** Game info and rules
 
+## Setup & Installation
+
+### 🚀 Deploy to Vercel (Recommended)
+1. Fork this repository to your GitHub account
+2. Go to [vercel.com/new](https://vercel.com/new) and import your fork
+3. Add environment variable `GEMINI_API_KEY` with your API key
+4. Deploy! See [VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md) for detailed instructions
+
+### Quick Start (Browser)
+1. Clone or download this repository
+2. Open `index.html` in any modern browser
+3. Enter your Gemini API key when prompted, or skip to use basic AI
+
+### Development Setup
+```bash
+# Install dependencies
+npm install
+
+# For local development with environment variables
+npm run build
+npx http-server dist -p 3000
+
+# For simple development
+npm run dev
+```
+
+### Getting a Gemini API Key
+1. Visit [Google AI Studio](https://ai.google.dev/)
+2. Sign in with your Google account
+3. Create a new API key
+4. Copy the key and paste it when prompted in the game
+
+**Note:** The API key is stored locally in your browser and never sent anywhere except to Google's official Gemini API.
+
 ## Technical
 
-Built with vanilla HTML, CSS, and JavaScript. No dependencies needed.
-
-To play locally: Just open `index.html` in any browser. 
+- **Frontend:** Vanilla HTML, CSS, and JavaScript (ES6 modules)
+- **AI Integration:** Google Gemini 2.5 Flash Preview API
+- **Dependencies:** @google/genai for AI communication
+- **Storage:** localStorage for game state, scores, and API key 
