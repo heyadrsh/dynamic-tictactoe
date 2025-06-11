@@ -10,12 +10,8 @@
     "dev": "npx http-server -p 3000 -c-1",
     "install-deps": "npm install"
   },
-  "dependencies": {
-    "@google/genai": "^0.21.0",
-    "mime": "^4.0.4"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "@types/node": "^22.9.0",
     "http-server": "^14.1.1"
   },
   "keywords": [
