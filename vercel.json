@@ -1,18 +1,5 @@
 {
   "buildCommand": "node build.js",
   "outputDirectory": "dist",
-  "framework": null,
-  "functions": {
-    "api/config.js": {
-      "runtime": "nodejs18.x"
-    }
-  },
-  "env": {
-    "GEMINI_API_KEY": "@gemini_api_key"
-  },
-  "build": {
-    "env": {
-      "GEMINI_API_KEY": "@gemini_api_key"
-    }
-  }
+  "framework": null
 } 
