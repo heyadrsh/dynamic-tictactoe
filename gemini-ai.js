@@ -410,41 +410,39 @@ Respond with ONLY the position number (0-8):`;
         ];
         
         if (gameState) {
+            // CRITICAL FIX: Only use active moves from the player's move list, NOT what's on the board
+            // This ensures faded marks aren't counted for win detection
             const playerMoves = player === 'x' ? gameState.xMoves : gameState.oMoves;
-            console.log(`🔍 Analyzing ${player.toUpperCase()} moves [${playerMoves.join(', ')}] for winning opportunities...`);
+            console.log(`🔍 Analyzing ${player.toUpperCase()} ACTIVE moves [${playerMoves.join(', ')}] for winning opportunities...`);
             console.log(`📋 Current board state:`, board);
             
             for (let i = 0; i < winPatterns.length; i++) {
                 const pattern = winPatterns[i];
                 const patternName = patternNames[i];
                 
-                // Count positions in this pattern that the player occupies (from active moves)
+                // FIXED: Only consider active moves for threat analysis, not what's on the board
+                // Count positions in this pattern that the player has in ACTIVE moves list
                 const playerPositions = pattern.filter(pos => playerMoves.includes(pos));
                 // Find empty positions that are actually available
                 const emptyPositions = pattern.filter(pos => board[pos] === '');
-                // Find positions not occupied by this player (could be empty or opponent)
-                const nonPlayerPositions = pattern.filter(pos => !playerMoves.includes(pos));
-                // Check what's actually on the board in this pattern
+                // For debugging: show what's on the board in this pattern
                 const boardState = pattern.map(pos => board[pos] || 'empty');
                 
-                console.log(`  Checking ${patternName} [${pattern.join('-')}]: ${player.toUpperCase()} has ${playerPositions.length}/3, empty: [${emptyPositions.join(', ')}], board: [${boardState.join(', ')}]`);
+                console.log(`  Checking ${patternName} [${pattern.join('-')}]: ${player.toUpperCase()} has ${playerPositions.length}/3 ACTIVE marks, empty: [${emptyPositions.join(', ')}], board: [${boardState.join(', ')}]`);
                 
-                // Win/threat condition: player has 2 positions AND exactly 1 position not occupied by player AND that position is empty
-                if (playerPositions.length === 2 && nonPlayerPositions.length === 1) {
-                    const potentialWinPos = nonPlayerPositions[0];
+                // Win/threat condition: player has 2 ACTIVE positions AND there's an empty position in the pattern
+                if (playerPositions.length === 2 && emptyPositions.length > 0) {
+                    // Find the empty position in the pattern that would complete the win
+                    const potentialWinPos = pattern.find(pos => !playerMoves.includes(pos) && board[pos] === '');
                     
-                    console.log(`  🎯 THREAT/WIN DETECTED: ${player.toUpperCase()} has 2/3 in ${patternName}, needs position ${potentialWinPos}`);
-                    
-                    // Check if this position is actually empty (can be played)
-                    if (board[potentialWinPos] === '') {
+                    if (potentialWinPos !== undefined) {
+                        console.log(`  🎯 THREAT/WIN DETECTED: ${player.toUpperCase()} has 2/3 ACTIVE marks in ${patternName}, can win at position ${potentialWinPos}`);
                         console.log(`🎯 ${player.toUpperCase()} ${player === 'x' ? 'THREAT' : 'WIN'} FOUND: ${patternName} [${pattern.join('-')}] → position ${potentialWinPos}`);
                         return potentialWinPos;
-                    } else {
-                        console.log(`  ❌ Position ${potentialWinPos} blocked by opponent (${board[potentialWinPos]})`);
                     }
                 }
             }
-            console.log(`✅ No immediate ${player === 'x' ? 'threats' : 'wins'} found for ${player.toUpperCase()}`);
+            console.log(`✅ No immediate ${player === 'x' ? 'threats' : 'wins'} found for ${player.toUpperCase()} active marks`);
         } else {
             // Fallback analysis without gameState (less reliable)
             for (let i = 0; i < winPatterns.length; i++) {

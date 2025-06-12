@@ -150,7 +150,7 @@ body {
 @keyframes drawX1 {
     0% { 
         transform: translate(-50%, -50%) rotate(45deg) scaleX(0);
-        opacity: 0.5;
+        opacity: 1;
     }
     100% { 
         transform: translate(-50%, -50%) rotate(45deg) scaleX(1);
@@ -161,7 +161,7 @@ body {
 @keyframes drawX2 {
     0% { 
         transform: translate(-50%, -50%) rotate(-45deg) scaleX(0);
-        opacity: 0.5;
+        opacity: 1;
     }
     100% { 
         transform: translate(-50%, -50%) rotate(-45deg) scaleX(1);
@@ -221,7 +221,7 @@ body {
     }
     30% { 
         box-shadow: 0 0 2px rgba(255, 255, 255, 0.3); 
-        opacity: 0.5;
+        opacity: 1;
     }
     100% { 
         box-shadow: 0 0 0px rgba(255, 255, 255, 0); 
@@ -316,14 +316,22 @@ body {
 }
 
 /* Refined fade out animations */
+.cell.fading.x::before,
+.cell.fading.x::after {
+    height: 2px;
+    background-image: linear-gradient(to right, rgba(255, 128, 128, 0.9) 50%, transparent 50%);
+    background-position: 0 0;
+    background-size: 10px 10px;
+    animation: fadeOutX 0.4s forwards;
+}
+
+/* Restore rotation variables */
 .cell.fading.x::before {
     --rotation: 45deg;
-    animation: fadeOutX 0.4s forwards;
 }
 
 .cell.fading.x::after {
     --rotation: -45deg;
-    animation: fadeOutX 0.4s forwards;
 }
 
 @keyframes fadeOutX {
@@ -331,11 +339,14 @@ body {
         opacity: 1;
         transform: translate(-50%, -50%) rotate(var(--rotation)) scaleX(1);
         background-color: var(--text-color);
+        background-image: none;
     }
     100% {
-        opacity: 0;
+        opacity: 1;
         transform: translate(-50%, -50%) rotate(var(--rotation)) scaleX(0.7);
-        background-color: var(--text-color);
+        background-color: transparent;
+        background-image: linear-gradient(to right, rgba(255, 128, 128, 1) 50%, transparent 50%);
+        height: 2px;
     }
 }
 
@@ -351,41 +362,39 @@ body {
         border-color: var(--text-color);
     }
     100% {
-        opacity: 0;
+        opacity: 1;
         transform: translate(-50%, -50%) scale(0.7);
-        border-color: rgba(255, 255, 255, 0.3);
+        border-color: rgba(255, 128, 128, 1);
+        border-width: 2px;
+        border-style: dashed;
     }
 }
 
-/* Style for next-to-fade indicators - fade once and stay faded */
+/* Style for next-to-fade indicators - light red with striped pattern */
 .cell.next-to-fade.x::before, 
 .cell.next-to-fade.x::after {
-    animation: fadeToIndicator 0.5s ease-out forwards;
+    animation: redStripedIndicatorX 0.3s ease-out forwards;
 }
 
 .cell.next-to-fade.o::before {
-    animation: fadeToIndicatorO 0.5s ease-out forwards;
+    animation: redStripedIndicatorO 0.3s ease-out forwards;
 }
 
-@keyframes fadeToIndicator {
+@keyframes redStripedIndicatorX {
     0% { 
-        opacity: 1; 
         background-color: var(--text-color);
     }
     100% { 
-        opacity: 0.4; 
-        background-color: var(--text-color);
+        background-color: #ff6b6b;
     }
 }
 
-@keyframes fadeToIndicatorO {
+@keyframes redStripedIndicatorO {
     0% {
-        opacity: 1;
         border-color: var(--text-color);
     }
     100% {
-        opacity: 0.4;
-        border-color: rgba(255, 255, 255, 0.4);
+        border-color: #ff6b6b;
     }
 }
 

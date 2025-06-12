@@ -782,6 +782,12 @@ function applyVictoryAnimation(cell) {
 async function makeAIMove() {
     if (state.gameOver) return;
     
+    // CRITICAL FIX: Prevent multiple simultaneous AI moves
+    if (state.currentPlayer !== 'x') {
+        console.warn('⚠️ AI move attempted while not human turn - blocking to prevent race condition');
+        return;
+    }
+    
     // Set current player to 'o' for AI
     state.currentPlayer = 'o';
     
@@ -804,9 +810,21 @@ async function makeAIMove() {
         // Update status to show thinking progress
         updateAIStatus('Strategizing...', 'thinking');
         
-        // Get move from Gemini AI with enhanced reasoning
+        // CRITICAL FIX: Get move ONCE and store it - no multiple analysis calls
         const result = await geminiAI.getMoveWithReasoning(state);
-        const index = result.move;
+        let index = result.move;
+        
+        // CRITICAL FIX: Validate move before placing
+        if (state.board[index] !== '') {
+            console.error(`🚨 AI tried to place mark on occupied position ${index}! Falling back.`);
+            const fallbackMove = geminiAI.getFallbackMove(state);
+            if (state.board[fallbackMove] !== '') {
+                console.error('🚨 Even fallback move is invalid! Aborting AI turn.');
+                state.currentPlayer = 'x';
+                return;
+            }
+            index = fallbackMove;
+        }
         
         // Show AI reasoning in the panel
         if (result.reasoning) {
@@ -819,21 +837,21 @@ async function makeAIMove() {
         // Small delay to show the reasoning
         await new Promise(resolve => setTimeout(resolve, 500));
     
-    // Place the mark
-    placeMark(index);
-    
-    // Check for win
-    if (!checkGameEnd()) {
-        ensureOMarksVisible();
-        state.currentPlayer = 'x';
+        // CRITICAL FIX: Place the mark and immediately prevent further AI analysis
+        placeMark(index);
         
-        // Update panel state
-        aiThinkingPanel.setThinking(false);
-        aiThinkingPanel.updateGameState();
-        
-        // Update status for player turn
-        updateAIStatus('Your Turn', geminiAI.isAvailable() ? 'gemini' : 'fallback');
-    }
+        // CRITICAL FIX: Immediately check for game end to prevent further moves
+        if (!checkGameEnd()) {
+            ensureOMarksVisible();
+            state.currentPlayer = 'x'; // Switch to human immediately
+            
+            // Update panel state
+            aiThinkingPanel.setThinking(false);
+            aiThinkingPanel.updateGameState();
+            
+            // Update status for player turn
+            updateAIStatus('Your Turn', geminiAI.isAvailable() ? 'gemini' : 'fallback');
+        }
         
     } catch (error) {
         console.error('Error making AI move:', error);
@@ -850,11 +868,19 @@ async function makeAIMove() {
         
         // Fallback to simple AI
         const fallbackMove = geminiAI.getFallbackMove(state);
+        
+        // CRITICAL FIX: Validate fallback move
+        if (state.board[fallbackMove] !== '') {
+            console.error('🚨 Fallback move is also invalid! Aborting AI turn.');
+            state.currentPlayer = 'x';
+            return;
+        }
+        
         placeMark(fallbackMove);
         
         if (!checkGameEnd()) {
             ensureOMarksVisible();
-        state.currentPlayer = 'x';
+            state.currentPlayer = 'x'; // Switch to human immediately
             
             aiThinkingPanel.setThinking(false);
             aiThinkingPanel.updateGameState();
